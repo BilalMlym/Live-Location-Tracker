@@ -3008,6 +3008,13 @@ expo-asset@~8.7.0:
     path-browserify "^1.0.0"
     url-parse "^1.5.9"
 
+expo-background-fetch@^11.0.1:
+  version "11.0.1"
+  resolved "https://registry.yarnpkg.com/expo-background-fetch/-/expo-background-fetch-11.0.1.tgz#fc9574f090172184459d618b5404e279efff43e8"
+  integrity sha512-Tp6JrqH+aexgpttuDq/hjoTqLjTo0ery+FZTtiL6zL9YNt7Q0LtiC+icfob/bD7ooIEWrTiG/+J0gnzlCiPSmg==
+  dependencies:
+    expo-task-manager "~11.0.0"
+
 expo-constants@~14.0.0, expo-constants@~14.0.2:
   version "14.0.2"
   resolved "https://registry.yarnpkg.com/expo-constants/-/expo-constants-14.0.2.tgz#2cb1dec8f41a64c2fc5b4eecaf77d7661cad01cc"
@@ -3069,7 +3076,7 @@ expo-status-bar@~1.4.2:
   resolved "https://registry.yarnpkg.com/expo-status-bar/-/expo-status-bar-1.4.2.tgz#14f2b9a6dc7d550578421f07e0046f5fafc2b403"
   integrity sha512-ZWjO6D4ARGYfAd3SWDD3STNudHDhyBZDZjhhseqoEmsf7bS9ykny8KKOhlzJW24qIQNPhkgdvHhaw9fQwMJy3Q==
 
-expo-task-manager@~11.0.1:
+expo-task-manager@^11.0.1, expo-task-manager@~11.0.0:
   version "11.0.1"
   resolved "https://registry.yarnpkg.com/expo-task-manager/-/expo-task-manager-11.0.1.tgz#0c131c74dba46eb97989841336d3c8bdbf9c2a28"
   integrity sha512-9KXWkQyzldiTBz0+wRe7ypQQ0m02j838f8j0pDRrDbW2X5hBUJWzDGq7OItJ5F9vDjJ3oRZikOAhFGj+wxh3EA==
@@ -5414,6 +5421,11 @@ react-native-codegen@^0.70.6:
     flow-parser "^0.121.0"
     jscodeshift "^0.13.1"
     nullthrows "^1.1.1"
+
+react-native-geolocation-service@^5.3.1:
+  version "5.3.1"
+  resolved "https://registry.yarnpkg.com/react-native-geolocation-service/-/react-native-geolocation-service-5.3.1.tgz#4ce1017789da6fdfcf7576eb6f59435622af4289"
+  integrity sha512-LTXPtPNmrdhx+yeWG47sAaCgQc3nG1z+HLLHlhK/5YfOgfLcAb9HAkhREPjQKPZOUx8pKZMIpdGFUGfJYtimXQ==
 
 react-native-gradle-plugin@^0.70.3:
   version "0.70.3"
