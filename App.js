@@ -1,7 +1,7 @@
 import * as Location from "expo-location";
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import * as BackgroundFetch from "expo-background-fetch";
+
 import * as TaskManager from "expo-task-manager";
 import { StatusBar } from "expo-status-bar";
 import { StyleSheet, Text, View, Button } from "react-native";
@@ -14,34 +14,21 @@ export default function App() {
 
   const ref = [];
 
-  const TASK_NAME = "BACKGROUND_TASK";
-
-  TaskManager.defineTask(TASK_NAME, () => {
-    try {
-      // fetch data here...
-      const receivedNewData = "Simulated fetch " + Math.random();
-      console.log("My task ", receivedNewData);
-      return receivedNewData
-        ? BackgroundFetch.Result.NewData
-        : BackgroundFetch.Result.NoData;
-    } catch (err) {
-      return BackgroundFetch.Result.Failed;
+  const LOCATION_TASK_NAME = "background-location-task";
+  TaskManager.defineTask(LOCATION_TASK_NAME, ({ data, error }) => {
+    console.log("hello");
+    if (error) {
+      // Error occurred - check `error.message` for more details.
+      return;
+    }
+    if (data) {
+      const { locations } = data;
+      // do something with the locations captured in the background
     }
   });
 
-  RegisterBackgroundTask = async () => {
-    try {
-      await BackgroundFetch.registerTaskAsync(TASK_NAME, {
-        minimumInterval: 5, // seconds,
-      });
-      console.log("Task registered");
-    } catch (err) {
-      console.log("Task Register failed:", err);
-    }
-  };
-
   useEffect(() => {
-    ref.location = setInterval(sendLocation, 1000);
+    ref.location = setInterval(sendLocation, 3000);
 
     return () => {
       if (ref.location) {
@@ -53,16 +40,14 @@ export default function App() {
   function sendLocation() {
     axios
       .post(
-        "https://ed18-31-223-44-6.ngrok.io/home",
+        "https://1d34-31-223-44-119.ngrok.io/home",
 
         {
           latitude: { latitude },
           longitude: { longitude },
         }
       )
-      .then(function (response) {
-        console.log(response);
-      })
+      .then(function (response) {})
       .catch(function (error) {
         console.log(error);
       });
@@ -70,10 +55,16 @@ export default function App() {
 
   useEffect(() => {
     (async () => {
-      let { status } = await Location.requestForegroundPermissionsAsync();
-      if (status !== "granted") {
-        setErrorMsg("Permission to access location was denied");
-        return;
+      const { status: foregroundStatus } =
+        await Location.requestForegroundPermissionsAsync();
+      if (foregroundStatus === "granted") {
+        const { status: backgroundStatus } =
+          await Location.requestBackgroundPermissionsAsync();
+        if (backgroundStatus === "granted") {
+          await Location.startLocationUpdatesAsync("background-location-task", {
+            accuracy: Location.Accuracy.Balanced,
+          });
+        }
       }
 
       let location = await Location.getCurrentPositionAsync({});
@@ -106,6 +97,7 @@ export default function App() {
   return (
     <View style={styles.container}>
       <Button onPress={sendLocation} title="SARITUTKU"></Button>
+
       <Text style={styles.red}>{dt}</Text>
 
       {/* <Text style={styles.paragraph}> {text}</Text> */}
