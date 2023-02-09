@@ -1,7 +1,7 @@
 import * as Location from "expo-location";
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-
+import * as BackgroundFetch from "expo-background-fetch";
 import * as TaskManager from "expo-task-manager";
 import { StatusBar } from "expo-status-bar";
 import { StyleSheet, Text, View, Button } from "react-native";
@@ -13,19 +13,6 @@ export default function App() {
   const [dt, setDt] = useState(new Date().toLocaleString());
 
   const ref = [];
-
-  const LOCATION_TASK_NAME = "background-location-task";
-  TaskManager.defineTask(LOCATION_TASK_NAME, ({ data, error }) => {
-    console.log("hello");
-    if (error) {
-      // Error occurred - check `error.message` for more details.
-      return;
-    }
-    if (data) {
-      const { locations } = data;
-      // do something with the locations captured in the background
-    }
-  });
 
   useEffect(() => {
     ref.location = setInterval(sendLocation, 3000);
@@ -66,6 +53,18 @@ export default function App() {
           });
         }
       }
+      const LOCATION_TASK_NAME = "background-location-task";
+      TaskManager.defineTask(LOCATION_TASK_NAME, ({ data, error }) => {
+        console.log(location);
+        if (error) {
+          // Error occurred - check `error.message` for more details.
+          return;
+        }
+        if (data) {
+          const { locations } = data;
+          // do something with the locations captured in the background
+        }
+      });
 
       let location = await Location.getCurrentPositionAsync({});
       const latitude = location["coords"]["latitude"];
