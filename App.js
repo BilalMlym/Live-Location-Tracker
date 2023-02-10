@@ -27,7 +27,7 @@ export default function App() {
   function sendLocation() {
     axios
       .post(
-        "https://1d34-31-223-44-119.ngrok.io/home",
+        "https://e02e-31-223-44-119.ngrok.io/home",
 
         {
           latitude: { latitude },
@@ -48,23 +48,12 @@ export default function App() {
         const { status: backgroundStatus } =
           await Location.requestBackgroundPermissionsAsync();
         if (backgroundStatus === "granted") {
-          await Location.startLocationUpdatesAsync("background-location-task", {
+          console.log("hello");
+          await Location.startLocationUpdatesAsync(YOUR_TASK_NAME, {
             accuracy: Location.Accuracy.Balanced,
           });
         }
       }
-      const LOCATION_TASK_NAME = "background-location-task";
-      TaskManager.defineTask(LOCATION_TASK_NAME, ({ data, error }) => {
-        console.log(location);
-        if (error) {
-          // Error occurred - check `error.message` for more details.
-          return;
-        }
-        if (data) {
-          const { locations } = data;
-          // do something with the locations captured in the background
-        }
-      });
 
       let location = await Location.getCurrentPositionAsync({});
       const latitude = location["coords"]["latitude"];
@@ -73,6 +62,16 @@ export default function App() {
       setLongitude(longitude);
     })();
   }, []);
+
+  const YOUR_TASK_NAME = "first-task";
+
+  TaskManager.defineTask(YOUR_TASK_NAME, ({ data: { locations }, error }) => {
+    if (error) {
+      // check `error.message` for more details.
+      return;
+    }
+    console.log("Received new locations", "locations");
+  });
 
   let text2 = "Waiting..";
   if (errorMsg) {
