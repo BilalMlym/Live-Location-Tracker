@@ -6,16 +6,16 @@ import * as TaskManager from "expo-task-manager";
 import { StatusBar } from "expo-status-bar";
 import { StyleSheet, Text, View, Button } from "react-native";
 
-const TASK_NAME = "BACKGROUND_TASK";
+const BACKGROUND_FETCH_TASK = "background-fetch";
+const TASK_NAME = "background";
 
-TaskManager.defineTask(TASK_NAME, () => {
+TaskManager.defineTask(BACKGROUND_FETCH_TASK, () => {
   const now = Date.now();
 
   console.log(
     `Got background fetch call at date: ${new Date(now).toISOString()}`
   );
 
-  // Be sure to return the successful result type!
   return BackgroundFetch.BackgroundFetchResult.NewData;
 });
 
@@ -25,19 +25,48 @@ export default function App() {
   const [errorMsg, setErrorMsg] = useState(null);
   const [dt, setDt] = useState(new Date().toLocaleString());
 
+  const [isRegistered, setIsRegistered] = useState(false);
+  const [status, setStatus] = useState(null);
+
   const ref = [];
 
   useEffect(() => {
-    registerBackgroundTask = async () => {
-      return BackgroundFetch.registerTaskAsync(TASK_NAME, {
-        minimumInterval: 60 * 15, // 15 minutes
-      });
-    };
-    console.log("here");
+    checkStatusAsync();
   }, []);
 
+  const checkStatusAsync = async () => {
+    const status = await BackgroundFetch.getStatusAsync();
+    const isRegistered = await TaskManager.isTaskRegisteredAsync(
+      BACKGROUND_FETCH_TASK
+    );
+    setStatus(status);
+    setIsRegistered(isRegistered);
+  };
+
+  const toggleFetchTask = async () => {
+    if (isRegistered) {
+      await unregisterBackgroundFetchAsync();
+      console.log("registered");
+    } else {
+      await registerBackgroundFetchAsync();
+      console.log("not registered");
+    }
+
+    checkStatusAsync();
+  };
+
+  async function registerBackgroundFetchAsync() {
+    return BackgroundFetch.registerTaskAsync(BACKGROUND_FETCH_TASK, {
+      minInterval: 900, // 15 minutes
+    });
+  }
+
+  async function unregisterBackgroundFetchAsync() {
+    return BackgroundFetch.unregisterTaskAsync(BACKGROUND_FETCH_TASK);
+  }
+
   useEffect(() => {
-    ref.location = setInterval(sendLocation, 20000000000);
+    ref.location = setInterval(sendLocation, 20000);
 
     return () => {
       if (ref.location) {
@@ -70,14 +99,11 @@ export default function App() {
         const { status: backgroundStatus } =
           await Location.requestBackgroundPermissionsAsync();
         if (backgroundStatus === "granted") {
-          await Location.startLocationUpdatesAsync(TASK_NAME, {
+          await Location.startLocationUpdatesAsync(BACKGROUND_FETCH_TASK, {
             accuracy: Location.Accuracy.Balanced,
           });
         }
       }
-      registerBackgroundTask();
-      console.log("here");
-
       let location = await Location.getCurrentPositionAsync({});
       const latitude = location["coords"]["latitude"];
       const longitude = location["coords"]["longitude"];
@@ -107,6 +133,31 @@ export default function App() {
 
   return (
     <View style={styles.container}>
+      <View style={styles.screen}>
+        <View style={styles.Container}>
+          <Text>
+            Background fetch status:{" "}
+            <Text style={styles.boldText}>
+              {status && BackgroundFetch.BackgroundFetchStatus[status]}
+            </Text>
+          </Text>
+          <Text>
+            Background fetch task name:{" "}
+            <Text style={styles.boldText}>
+              {isRegistered ? BACKGROUND_FETCH_TASK : "Not registered yet!"}
+            </Text>
+          </Text>
+        </View>
+        <View style={styles.Container}></View>
+        <Button
+          title={
+            isRegistered
+              ? "Unregister BackgroundFetch task"
+              : "Register BackgroundFetch task"
+          }
+          onPress={toggleFetchTask}
+        />
+      </View>
       <Button onPress={sendLocation} title="SARITUTKU"></Button>
       <Text style={styles.red}>{dt}</Text>
 
@@ -126,3 +177,4 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
 });
+// 13:24

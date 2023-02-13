@@ -19,11 +19,7 @@
     ],
     "ios": {
       "infoPlist": {
-        "UIBackgroundModes": ["location", "fetch"],
-        "NSLocationUsageDescription":"App requires location even when the App is backgrounded.",
-        "NSLocationWhenInUseUsageDescription":"App requires location even when the App is backgrounded.",
-        "NSLocationAlwaysUsageDescription":"App requires location even when the App is backgrounded.",
-        "NSLocationAlwaysAndWhenInUseUsageDescription":"App requires location even when the App is backgrounded."
+        "UIBackgroundModes": ["location", "fetch"]
       },
       "supportsTablet": true
     },
